@@ -1,0 +1,22 @@
+GET http://localhost:3001/api/persons
+
+###
+POST http://localhost:3001/api/persons/
+content-type: application/json
+# There needs to be an empty line here!
+
+{
+    "name": "Test Person",
+    "number": "+46730445334"
+}
+
+###
+DELETE http://localhost:3001/api/persons/634b1318d59d357a8e89a52c
+
+###
+PUT http://localhost:3001/api/persons/634b0db19bf05ee82e3211d7
+Content-Type: application/json
+
+{
+    "number": "777"
+}
