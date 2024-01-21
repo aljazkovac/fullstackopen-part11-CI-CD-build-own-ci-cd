@@ -1,6 +1,6 @@
 # fly.toml file generated for hidden-shape-4921 on 2022-09-11T19:35:36+02:00
 
-app = "hidden-shape-4921"
+app = "purple-frog-1189"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
