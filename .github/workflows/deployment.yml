@@ -1,0 +1,99 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  setup_and_test_backend:
+    name: Setup, lint and build backend
+    runs-on: ubuntu-20.04
+    working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Check style
+        run: npm run eslint
+        
+      - name: Build
+        run: npm run build:ui
+        
+      - name: Notify Discord Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() }}
+        with:
+          severity: error
+          details: Failed to build, lint or test. No new version deployed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          
+  setup_and_test_frontend:
+    name: Setup, lint and build frontend
+    runs-on: ubuntu-20.04
+    working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check style
+        run: npm run eslint
+
+      - name: Notify Discord Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() }}
+        with:
+          severity: error
+          details: Failed to build, lint or test. No new version deployed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+  
+  deploy:
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
+    name: Deploy to Fly
+    needs: setup_and_test_backend, setup_and_test_frontend
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  
+  tag_release:
+    name: Tag release
+    needs: deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create tag
+        id: create_tag
+        uses: anothrNick/github-tag-action@a2c70ae13a881faf2b4953baaa9e49731997ab36
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+      - name: Notify Discord Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() }}
+        with:
+          severity: info
+          details: "Deployed and tagged a new version: ${{ steps.create_tag.outputs.new_tag }}"
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
