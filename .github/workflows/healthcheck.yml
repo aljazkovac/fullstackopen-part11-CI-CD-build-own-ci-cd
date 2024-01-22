@@ -3,7 +3,7 @@ name: Health Check Pipeline
 on:
   push:
     branches:
-      - master
+      - main
     #schedule:
     #- cron: '30 10 * * *'
 
