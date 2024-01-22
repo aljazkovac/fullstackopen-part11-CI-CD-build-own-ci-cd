@@ -56,6 +56,10 @@ jobs:
       - name: Check style
         run: npm run lint
         working-directory: ./backend
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
         
       - name: Build
         run: npm run build:ui
