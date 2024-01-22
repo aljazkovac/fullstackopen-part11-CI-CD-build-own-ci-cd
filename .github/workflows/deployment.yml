@@ -93,7 +93,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
       - name: Notify Discord Success
-        uses: rjstone/discord-webhook-notify@
+        uses: rjstone/discord-webhook-notify@v1
         if: ${{ success() }}
         with:
           severity: info
