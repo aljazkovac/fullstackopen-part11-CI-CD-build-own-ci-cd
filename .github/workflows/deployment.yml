@@ -12,7 +12,6 @@ jobs:
   setup_and_test_backend:
     name: Setup, lint and build backend
     runs-on: ubuntu-20.04
-    working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,12 +23,15 @@ jobs:
           
       - name: Install dependencies
         run: npm install
+        working-directory: ./backend
         
       - name: Check style
         run: npm run eslint
+        working-directory: ./backend
         
       - name: Build
         run: npm run build:ui
+        working-directory: ./backend
         
       - name: Notify Discord Failure
         uses: rjstone/discord-webhook-notify@v1
@@ -42,7 +44,6 @@ jobs:
   setup_and_test_frontend:
     name: Setup, lint and build frontend
     runs-on: ubuntu-20.04
-    working-directory: ./frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,9 +55,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./frontend
 
       - name: Check style
         run: npm run eslint
+        working-directory: ./frontend
 
       - name: Notify Discord Failure
         uses: rjstone/discord-webhook-notify@v1
