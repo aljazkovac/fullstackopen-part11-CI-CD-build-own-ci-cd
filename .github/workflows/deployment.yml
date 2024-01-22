@@ -56,7 +56,6 @@ jobs:
       - name: Install dependencies
         run: npm install
         working-directory: ./frontend
-
       - name: Check style
         run: npm run eslint
         working-directory: ./frontend
@@ -72,7 +71,7 @@ jobs:
   deploy:
     if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
     name: Deploy to Fly
-    needs: setup_and_test_backend, setup_and_test_frontend
+    needs: [setup_and_test_backend, setup_and_test_frontend]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -94,7 +93,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
       - name: Notify Discord Success
-        uses: rjstone/discord-webhook-notify@v1
+        uses: rjstone/discord-webhook-notify@
         if: ${{ success() }}
         with:
           severity: info
