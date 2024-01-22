@@ -57,6 +57,7 @@ jobs:
         run: npm run lint
         working-directory: ./backend
 
+      # TODO: Consider caching the dependencies.
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
