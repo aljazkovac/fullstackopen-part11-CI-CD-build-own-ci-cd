@@ -9,6 +9,34 @@ on:
     types: [opened, synchronize]
 
 jobs:
+  setup_and_test_frontend:
+    name: Setup, lint and build frontend
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./frontend
+        
+      - name: Check style
+        run: npm run lint
+        working-directory: ./frontend
+
+      - name: Notify Discord Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() }}
+        with:
+          severity: error
+          details: Failed to build, lint or test. No new version deployed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          
   setup_and_test_backend:
     name: Setup, lint and build backend
     runs-on: ubuntu-20.04
@@ -41,33 +69,6 @@ jobs:
           details: Failed to build, lint or test. No new version deployed!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           
-  setup_and_test_frontend:
-    name: Setup, lint and build frontend
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
-      - name: Check style
-        run: npm run lint
-        working-directory: ./frontend
-
-      - name: Notify Discord Failure
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ failure() }}
-        with:
-          severity: error
-          details: Failed to build, lint or test. No new version deployed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-  
   deploy:
     if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
     name: Deploy to Fly
