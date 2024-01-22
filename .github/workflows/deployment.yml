@@ -26,7 +26,7 @@ jobs:
         working-directory: ./backend
         
       - name: Check style
-        run: npm run eslint
+        run: npm run lint
         working-directory: ./backend
         
       - name: Build
@@ -57,7 +57,7 @@ jobs:
         run: npm install
         working-directory: ./frontend
       - name: Check style
-        run: npm run eslint
+        run: npm run lint
         working-directory: ./frontend
 
       - name: Notify Discord Failure
