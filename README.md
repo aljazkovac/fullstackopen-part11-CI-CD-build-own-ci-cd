@@ -5,6 +5,6 @@ Please see the other repository that contains the project for which we built a C
 
 Here is the certificate for this part:
 
-[Certificate - part 11 - CI/CD](https://github.com/aljazkovac/fullstackopen-part11-CI-CD-build-own-ci-cd/blob/main/certificate-fullstack-part11-cicd.png)
+![Certificate - part 11 - CI/CD](https://github.com/aljazkovac/fullstackopen-part11-CI-CD-build-own-ci-cd/blob/main/certificate-fullstack-part11-cicd.png)
 
 
